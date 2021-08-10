@@ -1,0 +1,55 @@
+--- tigervnc-1.10.1/unix/xserver/hw/vnc/XserverDesktop.cc	2019-12-20 09:02:02.000000000 +0200
++++ tigervnc-1.10.1.mod/unix/xserver/hw/vnc/XserverDesktop.cc	2021-08-10 23:27:05.827666193 +0300
+@@ -40,6 +40,8 @@
+ #include <rfb/Configuration.h>
+ #include <rfb/ServerCore.h>
+ 
++#include <X11/keysym.h>
++
+ #include "XserverDesktop.h"
+ #include "vncBlockHandler.h"
+ #include "vncExtInit.h"
+@@ -76,7 +78,8 @@
+   : screenIndex(screenIndex_),
+     server(0), listeners(listeners_),
+     shadowFramebuffer(NULL),
+-    queryConnectId(0), queryConnectTimer(this)
++    queryConnectId(0), queryConnectTimer(this),
++    shiftDown(false), altGrDown(false)
+ {
+   format = pf;
+ 
+@@ -507,6 +510,33 @@
+ 
+ void XserverDesktop::keyEvent(rdr::U32 keysym, rdr::U32 keycode, bool down)
+ {
++  if (keysym == XK_Alt_R) {
++    altGrDown = down;
++    return;
++  }
++  if (keysym == XK_Shift_L || keysym == XK_Shift_R) {
++    shiftDown = down;
++  }
++
++  if (altGrDown) {
++    if (keysym == XK_2) keysym = XK_at;
++    if (keysym == XK_3) keysym = XK_sterling;
++    if (keysym == XK_4) keysym = XK_dollar;
++    if (keysym == XK_7) keysym = XK_braceleft;
++    if (keysym == XK_8) keysym = XK_bracketleft;
++    if (keysym == XK_9) keysym = XK_bracketright;
++    if (keysym == XK_0) keysym = XK_braceright;
++    if (keysym == XK_plus) keysym = XK_backslash;
++    if (keysym == XK_less) keysym = XK_bar;
++  }
++  if (keysym == 0) {
++    if (altGrDown) {
++      keysym = shiftDown ? XK_grave : XK_asciitilde;
++    } else {
++      keysym = shiftDown ? XK_asciicircum : XK_acute;
++    }
++  }
++
+   if (!rawKeyboard)
+     keycode = 0;
+ 
