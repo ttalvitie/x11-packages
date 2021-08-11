@@ -1,3 +1,9 @@
+# This fork: TigerVNC keyboard hack
+
+This fork patches the TigerVNC server package for Termux to work around the bugs of RealVNC Viewer for Android such that AltGr keys work correctly when using a hardware keyboard with Finnish layout. This is done in a simple, imperfect and ugly way: tracking Right Alt state and translating keysyms as necessary (see the patch [cc](packages/tigervnc/tigervnc-1.10.1_unix_xserver_hw_vnc_XserverDesktop.cc.patch) and [h](packages/tigervnc/tigervnc-1.10.1_unix_xserver_hw_vnc_XserverDesktop.h.patch) files). The fix works for most use cases; the accent and diaeresis keys work in a nonstandard way and the diaeresis symbol does not work. If you have trouble with AltGr keys using TigerVNC server on Termux and RealVNC Viewer for Android for some other keyboard layout, you can probably adapt this code to work for you.
+
+A precompiled ARM64 package is provided in the Releases section; if you need a newer version or you don't accept binary blobs from strangers, you should compile the patched package by yourself (see below for instructions).
+
 # Termux X11 Packages
 
 [![Packages last build status](https://github.com/termux/x11-packages/workflows/Packages/badge.svg)](https://github.com/termux/x11-packages/actions)
